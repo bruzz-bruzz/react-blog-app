@@ -13,7 +13,6 @@ const router = express.Router()
 router.use(express.json())
 router.use(cookieparser())
 async function verify(token:string,uuid:string){
-<<<<<<< HEAD
     const decrypted = jwt.verify(token,process.env.JWT_SECRET as string) as {uuid:string}
     return decrypted.uuid === uuid
 }
@@ -72,12 +71,5 @@ router.delete('/deleteBlog',async(req:Request,res:Response)=>{
     }
     await db.query("DELETE FROM blogdata WHERE userid = $1",[req.body.uuid])
     return res.status(200).json({message:"Blog deleted successfully",ok:true})
-=======
-    const decrypted = jwt.decode(token)
-    return decrypted === uuid
-}
-router.post('/addBlog',async(req:Request,res:Response)=>{
-    
->>>>>>> 14e2c0703e06c27c6e884b35007dd474683448dc
 })
 export default router

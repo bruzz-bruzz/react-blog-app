@@ -1,20 +1,16 @@
 import {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import './App.css'
-<<<<<<< HEAD
 import axios from 'axios'
 import Toast from './Toast'
 type responseData = {
     message:string,
     ok:boolean
 }
-=======
->>>>>>> 14e2c0703e06c27c6e884b35007dd474683448dc
 export default function Login(){
     const nav = useNavigate()
     const [email,setEmail] = useState<string>("")
     const [password,setPassword] = useState<string>("")
-<<<<<<< HEAD
     const [toast,setToast] = useState<{message:string,ok:boolean}>({message:"",ok:false})
     async function login(){
         try{
@@ -25,10 +21,6 @@ export default function Login(){
         } catch(err){
             setToast({message:'Error',ok:false})
         }
-=======
-    async function login(){
-        
->>>>>>> 14e2c0703e06c27c6e884b35007dd474683448dc
     }
     return (
         <div className='flex justify-center items-center font-mono text-slate-500'>
@@ -43,7 +35,6 @@ export default function Login(){
                         <label htmlFor='password'>Password: </label>
                         <input type='password' id="password" className='border border-black rounded-lg p-2' value={password} onChange={(e)=>setPassword(e.target.value)}/>
                     </div>
-<<<<<<< HEAD
                     <button type='submit' className='border border-black rounded-lg p-2' onClick={()=>{
                         login()
                     }}>Login</button>
@@ -53,12 +44,6 @@ export default function Login(){
             {toast.message.length > 0 && (
                 <Toast message={toast.message} ok={toast.ok}/>
             )}
-=======
-                    <button type='submit' className='border border-black rounded-lg p-2'>Login</button>
-                    <p>Don't have an account? <p className='text-blue-500' onClick={()=>nav('/register')}>Sign up!</p></p>
-                </form>
-            </div>
->>>>>>> 14e2c0703e06c27c6e884b35007dd474683448dc
         </div>
     )
 }
