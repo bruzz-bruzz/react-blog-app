@@ -13,6 +13,11 @@ const db = new Pool({
 const router = express.Router()
 router.use(express.json())
 router.use(cookieparser())
+type returnData = {
+    message:string,
+    ok:boolean,
+    data?:any
+}
 async function doesEmailExist(email:string){
     const query = await db.query("SELECT * FROM blogusers where email = $1",[email])
     return query.rows.length > 0
@@ -28,14 +33,14 @@ async function verify(token:string,uuid:string){
     const decrypted = jwt.verify(token,process.env.JWT_SECRET as string) as {uuid:string}
     return decrypted.uuid === uuid
 }
-router.post('/getUserData',async(req:Request,res:Response)=>{
+router.post('/getUserData',async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
     const user = await db.query("SELECT * FROM blogusers WHERE id = $1",[req.body.uuid])
     return res.status(200).json({message:"User data fetched successfully",ok:true,data:user.rows[0]})
 })
-router.post('/changeEmail',async(req:Request,res:Response)=>{
+router.post('/changeEmail',async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
@@ -45,7 +50,7 @@ router.post('/changeEmail',async(req:Request,res:Response)=>{
     await db.query("UPDATE blogusers SET email = $1 WHERE id = $2",[req.body.email,req.body.uuid])
     return res.status(200).json({message:"Email changed successfully",ok:true})
 })
-router.post("/changePassword",async(req:Request,res:Response)=>{
+router.post("/changePassword",async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
@@ -56,7 +61,7 @@ router.post("/changePassword",async(req:Request,res:Response)=>{
     await db.query("UPDATE blogusers set password = $1 where id = $2",[hash,req.body.uuid])
     return res.status(200).json({message:"Password changed successfully",ok:true})
 })
-router.post("/changeUsername",async(req:Request,res:Response)=>{
+router.post("/changeUsername",async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
@@ -66,7 +71,7 @@ router.post("/changeUsername",async(req:Request,res:Response)=>{
     await db.query("update blogusers set username = $1 where id = $2",[req.body.username,req.body.uuid])
     return res.status(200).json({message:"Username changed successfully",ok:true})
 })
-router.post('/register',async(req:Request,res:Response)=>{
+router.post('/register',async(req:Request,res:Response<returnData>)=>{
     if(await doesEmailExist(req.body.email) === true){
         return res.status(400).json({message:"Email already exists",ok:false})
     }
@@ -74,7 +79,7 @@ router.post('/register',async(req:Request,res:Response)=>{
     await db.query("insert into blogusers(email,password,username,registereddate) values($1,$2,$3,$4)",[req.body.email,hash,req.body.username,new Date()])
     return res.status(200).json({message:"Registered successfully",ok:true})
 })
-router.post('/login',async(req:Request,res:Response)=>{
+router.post('/login',async(req:Request,res:Response<returnData>)=>{
     if(await doesEmailExist(req.body.email) === true){
         return res.status(400).json({message:"Email already exists",ok:false})
     }
@@ -91,14 +96,14 @@ router.post('/login',async(req:Request,res:Response)=>{
     })
     return res.status(200).json({message:"Login successful",ok:true})
 })
-router.post('/logout',async(req:Request,res:Response)=>{
+router.post('/logout',async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
     res.clearCookie("token")
     return res.status(200).json({message:"Successfully logged out",ok:true})
 })
-router.delete('/deleteAccount',async(req:Request,res:Response)=>{
+router.delete('/deleteAccount',async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
