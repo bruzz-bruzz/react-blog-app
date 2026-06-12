@@ -5,7 +5,7 @@ type Data = {
     creationdate:string,
     likes:number,
     alreadyLiked:boolean,
-    previewData:string
+    previewData:string,
 }
 export default function Blogcard({title,author,creationdate,likes,alreadyLiked,previewData}:Data){
     return (

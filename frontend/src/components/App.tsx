@@ -8,6 +8,9 @@ export default function App(){
   const nav = useNavigate()
   const [userData,setUserData] = useState<{username:string,email:string}>({username:"",email:""})
   const [toast,setToast] = useState<{message:string,ok:boolean}>({message:"",ok:false})
+  const [batchNumber,setBatchNumber] = useState<number>(1)
+  const [blogs,setBlogs] = useState<any[]>([])
+  const [dateOrder,setDateOrder] = useState<"ASC"|"DESC">("DESC")
   async function verify(){
     const res = await axios.post(`$P{import.meta.env.VITE_BACKEND_URL}/user/verify`,{
       uuid:par.uuid
@@ -24,9 +27,18 @@ export default function App(){
             setUserData({username:response.data.data.username,email:response.data.data.email})   
         }
     }
+  async function getBlogs(){
+    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/data/getBlogs`,{
+      uuid:par.id,
+      getAll:true,
+      order:dateOrder
+    })
+    setBlogs(res.data.data)
+  }
     useEffect(()=>{
         verify()
         getUserData()
+        getBlogs()
     },[])
   return (
     <div>
