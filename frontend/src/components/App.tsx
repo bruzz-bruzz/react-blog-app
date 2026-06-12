@@ -7,6 +7,7 @@ export default function App(){
   const par = useParams()
   const nav = useNavigate()
   const [userData,setUserData] = useState<{username:string,email:string}>({username:"",email:""})
+  const [toast,setToast] = useState<{message:string,ok:boolean}>({message:"",ok:false})
   async function verify(){
     const res = await axios.post(`$P{import.meta.env.VITE_BACKEND_URL}/user/verify`,{
       uuid:par.uuid
@@ -28,10 +29,15 @@ export default function App(){
         getUserData()
     },[])
   return (
+    <div>
     <div className='flex justify-center items-center font-mono text-slate-500'>
       <div className='flex jusitfy-center items-center flex-col'>
         <p>{userData.username}#{par.uuid}</p>
       </div>
+    </div>
+    {toast.message.length > 0 && (
+      <Toast message={toast.message} ok={toast.ok} />
+    )}
     </div>
   )
 }
