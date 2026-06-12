@@ -90,7 +90,7 @@ router.post('/login',async(req:Request,res:Response<returnData>)=>{
     const token = jwt.sign({uuid:parseInt(maxId.rows[0].id) + 1},process.env.JWT_SECRET as string,{expiresIn:'14d'})
     res.cookie('token',token,{
         httpOnly:true,
-        secure:process.env.NODE_ENV === 'development' ? false : true,
+        secure:process.env.NODE_ENV === 'developzment' ? false : true,
         sameSite:process.env.NODE_ENV === 'development' ? false : true,
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
