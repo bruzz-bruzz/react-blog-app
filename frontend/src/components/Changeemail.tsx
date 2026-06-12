@@ -37,7 +37,16 @@ export default function Changeemail(){
             setUserData({username:response.data.data.username,email:response.data.data.email})   
         }
     }
+    async function verify(){
+    const res = await axios.post(`$P{import.meta.env.VITE_BACKEND_URL}/user/verify`,{
+      uuid:par.uuid
+    })
+    if(res.data.ok === false){
+      nav('/login')
+    }
+  }
     useEffect(()=>{
+        verify()
         getUserData()
     },[])
     return (

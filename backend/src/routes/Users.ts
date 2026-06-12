@@ -33,6 +33,12 @@ async function verify(token:string,uuid:string){
     const decrypted = jwt.verify(token,process.env.JWT_SECRET as string) as {uuid:string}
     return decrypted.uuid === uuid
 }
+router.post('/verifyUser',async(req:Request,res:Response<returnData>)=>{
+    if(await verify(req.cookies.token,req.body.uuid) === false){
+        return res.status(400).json({message:"Unauthorized",ok:false})
+    }
+    return res.status(200).json({message:"User verified successfully",ok:true})
+})
 router.post('/getUserData',async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
