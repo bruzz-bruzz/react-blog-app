@@ -12,4 +12,7 @@ create table blogdata(
     data text,
     createddate timestamp,
     comments jsonb,
+    editeddate timestamp,
+    username text,
+    likes int[]
 )

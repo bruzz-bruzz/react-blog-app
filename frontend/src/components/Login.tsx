@@ -21,22 +21,37 @@ export default function Login(){
         }
     }
     return (
-        <div className='flex justify-center items-center font-mono text-slate-500'>
-            <div className='flex justify-center items-center flex-col'>
-                <h1>Login</h1>
-                <form>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-white font-sans">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+                <div className="mb-6 text-center">
+                    <h1 className="text-2xl font-semibold text-gray-800">Welcome back</h1>
+                    <p className="text-sm text-gray-500">Sign in to your account</p>
+                </div>
+                <form className="space-y-4" onSubmit={(e)=>{e.preventDefault(); login()}}>
                     <div>
-                        <label htmlFor='email'>Email: </label>
-                        <input type='text' id='email' className='border border-black rounded-lg p-2' value={email} onChange={(e)=>setEmail(e.target.value)}/>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input
+                            type="text"
+                            id="email"
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400"
+                            value={email}
+                            onChange={(e)=>setEmail(e.target.value)}
+                        />
                     </div>
                     <div>
-                        <label htmlFor='password'>Password: </label>
-                        <input type='password' id="password" className='border border-black rounded-lg p-2' value={password} onChange={(e)=>setPassword(e.target.value)}/>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-400"
+                            value={password}
+                            onChange={(e)=>setPassword(e.target.value)}
+                        />
                     </div>
-                    <button type='submit' className='border border-black rounded-lg p-2' onClick={()=>{
-                        login()
-                    }}>Login</button>
-                    <p>Don't have an account? <p className='text-blue-500' onClick={()=>nav('/register')}>Sign up!</p></p>
+                    <button type="submit" className="w-full py-2 bg-gradient-to-r from-sky-500 to-indigo-500 text-white rounded-lg shadow">Login</button>
+                    <div className="text-center text-sm text-gray-600">
+                        Don't have an account? <button className="text-sky-600 hover:underline" onClick={(e)=>{e.preventDefault(); nav('/register')}}>Sign up</button>
+                    </div>
                 </form>
             </div>
             {toast.message.length > 0 && (
