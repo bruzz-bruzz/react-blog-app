@@ -45,6 +45,10 @@ export default function App(){
         tmp.push(blogs[i])
       }
     }
+    setToast({message:`Found ${tmp.length} results`,ok:true})
+    setTimeout(()=>{
+      setToast({message:"",ok:false})
+    },3000)
     setBlogs(tmp)
   }
     useEffect(()=>{
@@ -76,7 +80,7 @@ export default function App(){
       </div>
       <div className='grid grid-cols-3 lg-4 p-2 space-y-4'>
         {blogs.map((val,idx)=>(
-          <Blogcard title={val.title} author={val.author} creationdate={val.createddate} likes={val.likes} alreadyLiked={val.likes.includes(par.uuid)} previewData={val.data.slice(0,50) + '...'}/>
+          <Blogcard title={val.title} author={val.author} creationdate={val.createddate} likes={val.likes} alreadyLiked={val.likes.includes(par.uuid)} previewData={val.data.slice(0,50) + '...'} userid={parseInt(par.uuid as string)}/>
         ))}
       </div>
       <div className='flex justify-center items-center space-x-4'>

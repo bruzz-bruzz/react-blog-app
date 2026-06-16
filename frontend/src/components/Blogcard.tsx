@@ -6,8 +6,10 @@ type Data = {
     likes:number,
     alreadyLiked:boolean,
     previewData:string,
+    userid:number
 }
-export default function Blogcard({title,author,creationdate,likes,alreadyLiked,previewData}:Data){
+export default function Blogcard({title,author,creationdate,likes,alreadyLiked,previewData,userid}:Data){
+
     return (
         <div>
             <div className='w-3/4 font-mono flex justify-center items-center flex-col p-2 rounded-lg'>
