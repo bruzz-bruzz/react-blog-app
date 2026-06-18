@@ -6,10 +6,17 @@ type Data = {
     likes:number,
     alreadyLiked:boolean,
     previewData:string,
-    userid:number
+    userid:number,
+    blogid:number
 }
-export default function Blogcard({title,author,creationdate,likes,alreadyLiked,previewData,userid}:Data){
-
+import axios from 'axios'
+export default function Blogcard({title,author,creationdate,likes,alreadyLiked,previewData,userid,blogid}:Data){
+    async function updateLike(){
+        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/data/updateLike`,{
+            uuid:userid,
+            blogId:blogid
+        })
+    }
     return (
         <div>
             <div className='w-3/4 font-mono flex justify-center items-center flex-col p-2 rounded-lg'>
