@@ -17,6 +17,14 @@ type returnData = {
     ok:boolean,
     data?:any
 }
+function isNotEmpty(values:string[]){
+    for(let i = 0; i < values.length; i++){
+        if(values[i].trim().length === 0){
+            return false
+        }
+    }
+    return true
+}
 async function verify(token:string,uuid:string){
     const decrypted = jwt.verify(token,process.env.JWT_SECRET as string) as {uuid:string}
     return decrypted.uuid === uuid

@@ -12,7 +12,15 @@ export default function Login(){
     const [email,setEmail] = useState<string>("")
     const [password,setPassword] = useState<string>("")
     const [toast,setToast] = useState<{message:string,ok:boolean}>({message:"",ok:false})
+    function validate(){
+        if(email.trim().length === 0 || password.trim().length === 0){
+            setToast({message:"Please fill in all fields",ok:false})
+            return false
+        }
+        return true
+    }
     async function login(){
+        if(!validate()) return
         try {
             const response = await axios.post<responseData>(`${import.meta.env.VITE_BACKEND_URL}/user/login`,{email:email,password:password})
             setToast({message:response.data.message,ok:response.data.ok})

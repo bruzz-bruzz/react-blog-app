@@ -12,7 +12,15 @@ export default function Register(){
     const [email,setEmail] = useState<string>("")
     const [password,setPassword] = useState<string>("")
     const [toast,setToast] = useState<{message:string,ok:boolean}>({message:"",ok:false})
+    function validate(){
+        if(email.trim().length === 0 || password.trim().length === 0){
+            setToast({message:"Please fill in all fields",ok:false})
+            return false
+        }
+        return true
+    }
     async function register(){
+        if(!validate()) return
         try{
             const response = await axios.post<responseData>(`${import.meta.env.VITE_BACKEND_URL}/user/register`,{
                 email:email,password:password
