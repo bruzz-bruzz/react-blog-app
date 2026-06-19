@@ -30,7 +30,7 @@ export default function Blog(){
                         </div>
                         <div className='flex justify-center items-center flex-col w-9/10'>
                             <h3 className='border-b border-gray-300'>Comments:</h3>
-
+                            
                         </div>
                         <div>   
                             <h4>Likes: {blog.likes.length}</h4>
