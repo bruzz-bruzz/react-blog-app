@@ -9,8 +9,10 @@ type Data = {
     userid:number,
     blogid:number
 }
+import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 export default function Blogcard({title,author,creationdate,likes,alreadyLiked,previewData,userid,blogid}:Data){
+    const nav = useNavigate()
     async function updateLike(){
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/data/updateLike`,{
             uuid:userid,
@@ -24,7 +26,8 @@ export default function Blogcard({title,author,creationdate,likes,alreadyLiked,p
                 <h3>By: {author}</h3>
                 <h2>Posted on: {creationdate}</h2>
                 <p>{previewData}</p>
-                <h3>Likes: {likes} <button>{alreadyLiked ? 'Liked' : "Like"}</button></h3>
+                <h3>Likes: {likes}</h3>
+                <button onClick={()=>nav('/blog/' + blogid)}>See more</button>
             </div>
         </div>
     )

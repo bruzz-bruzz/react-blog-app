@@ -45,6 +45,10 @@ router.post('/getBlogs',async(req:Request,res:Response<returnData>)=>{
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
+    if(req.body.blogid !== undefined){
+        const query = await db.query("SELECT * FROM blogdata where id = $1",[req.body.blogid])
+        return res.status(200).json({message:"Blog fetched successfully",ok:true,data:query.rows[0]})
+    }
     if(req.body.getAll === true){
         const results = await db.query("SELECT * FROM blogdata order by createddate $1 limit 30 where batchnumber = $2",[req.body.order,req.body.batchnumber])
         return res.status(200).json({message:"Blogs fetched successfully",ok:true,data:results.rows})
