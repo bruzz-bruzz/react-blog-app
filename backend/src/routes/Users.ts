@@ -52,8 +52,8 @@ router.post('/getUserData',[
     if(await verify(req.cookies.token,req.body.uuid) === false){
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
-    const user = await db.query("SELECT username FROM blogusers WHERE id = $1",[req.body.uuid])
-    return res.status(200).json({message:"User data fetched successfully",ok:true,data:user.rows[0].username})
+    const user = await db.query("SELECT email,username,registereddate FROM blogusers WHERE id = $1",[req.body.uuid])
+    return res.status(200).json({message:"User data fetched successfully",ok:true,data:user.rows[0]})
 })
 router.post('/changeEmail',[
     body("uuid").isInt(),
@@ -126,7 +126,8 @@ router.post('/login',[
     if(await doesEmailExist(req.body.email) === true){
         return res.status(400).json({message:"Email already exists",ok:false})
     }
-    if(await doesPasswordMatch(req.body.email,req.body.password) === false){
+    const pass = await db.query("SELECT password from blogusers where email = $1",[req.body.email])
+    if(await bcrypt.compare(pass.rows[0].password,req.body.password) === false){
         return res.status(400).json({message:"Password does not match",ok:false})
     }
     const maxId = await db.query("SELECT max(id) from blogusers")

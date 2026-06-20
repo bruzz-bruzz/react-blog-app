@@ -30,6 +30,10 @@ async function hasUserLiked(blogid:string,userid:string){
     const res = await db.query("SELECT * FROM blogdata where id = $1",[blogid])
     return res.rows[0].likes.includes(userid)
 }
+async function userOwnsBlog(uuid:number,blogid:string){
+    const res = await db.query("SELECT userid FROM blogdata where blogid = $1",[blogid])
+    return res.rows[0].userid === uuid
+}
 router.post('/likeBlog',[
     body('blogid').isInt(),
     body('uuid').isInt(),
@@ -51,6 +55,8 @@ router.post('/getBlogs',[
     body('uuid').isInt(),
     body('order').trim().escape().isString(),
     body('batchnumber').isInt(),
+    body('blogid').isInt(),
+    body('userbatchnumber').isInt()
 ],async(req:Request,res:Response<returnData>)=>{
     const errs = validationResult(req)
     if(!errs.isEmpty()){return res.status(400).json({message:"Data input error",ok:false})}
@@ -62,10 +68,10 @@ router.post('/getBlogs',[
         return res.status(200).json({message:"Blog fetched successfully",ok:true,data:query.rows[0]})
     }
     if(req.body.getAll === true){
-        const results = await db.query("SELECT * FROM blogdata order by createddate $1 limit 30 where batchnumber = $2",[req.body.order,req.body.batchnumber])
+        const results = await db.query("SELECT * FROM blogdata order by createddate $1 where batchnumber = $2",[req.body.order,req.body.batchnumber])
         return res.status(200).json({message:"Blogs fetched successfully",ok:true,data:results.rows})
     }
-    const results = await db.query("SELECT * FROM blogdata where userid = $1 AND batchnumber = $2 order by createddate $3",[req.body.uuid,req.body.batchnumber,req.body.order])
+    const results = await db.query("SELECT * FROM blogdata where userid = $1 AND userbatchnumber = $2 order by createddate $3",[req.body.uuid,req.body.userbatchnumber,req.body.order])
     return res.status(200).json({message:"Blogs fetched successfully",ok:true,data:results.rows})
 })
 router.post('/editBlog',[
@@ -75,10 +81,9 @@ router.post('/editBlog',[
     body('blogid').isInt()
 ],async(req:Request,res:Response<returnData>)=>{
     const errs = validationResult(req)
+    if(!await verify(req.cookies.token,req.body.uuid) === false){return res.status(400).json({message:"Unauthorized",ok:false})}
     if(!errs.isEmpty()){return res.status(400).json({message:"Data input error",ok:false})}
-    if(await verify(req.cookies.token,req.body.uuid) === false){
-        return res.status(400).json({message:"Unauthorized",ok:false})
-    }
+    if(!userOwnsBlog(req.body.uuid,req.body.blogid)){return res.status(400).json({message:"Unauthorized",ok:false})}
     await db.query("UPDATE blogdata set title=$1 data=$2 editeddate=$3 where id = $4",[req.body.title,req.body.data,new Date(),req.body.blogid])
     return res.status(200).json({message:"Blog updated successfully",ok:true})
 })
@@ -94,10 +99,14 @@ router.post('/addBlog',[
         return res.status(400).json({message:"Unauthorized",ok:false})
     }
     let batchnumber = await db.query("SELECT max(batchnumber) from blogdata")
+    let userbatchnumber = await db.query("SELECT max(userbatchnumber) from blogdata where userid = $2",[req.body.uuid])
     if(await isBatchFull(batchnumber.rows[0].batchnumber) === true){
         batchnumber.rows[0].batchnumber++
     }
-    await db.query("INSERT INTO blogdata(userid,title,data,createddate,comments,editeddate,username,batchnumber,likes) VALUES($1,$2,$3,$4,$5,$6,$7)",[req.body.uuid,req.body.title,req.body.data,new Date(),'{}',new Date(),req.body.username,batchnumber.rows[0].batchnumber,'[]'])
+    if(await isBatchFull(userbatchnumber.rows[0].userbatchnumber) === true){
+        userbatchnumber.rows[0].userbatchnumber++
+    }
+    await db.query("INSERT INTO blogdata(userid,title,data,createddate,comments,editeddate,username,batchnumber,likes,userbatchnumber) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",[req.body.uuid,req.body.title,req.body.data,new Date(),'{}',new Date(),req.body.username,batchnumber.rows[0].batchnumber || 1,'[]',userbatchnumber || 1])
     return res.status(200).json({message:"Blog added successfully",ok:true})
 })
 router.delete('/deleteBlog',[
