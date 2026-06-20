@@ -18,7 +18,7 @@ export default function Blogcard({title,author,creationdate,likes,previewData,bl
                 <h2>Posted on: {creationdate}</h2>
                 <p>{previewData}</p>
                 <h3>Likes: {likes}</h3>
-                <button onClick={()=>nav('/blog/' + blogid)}>See more</button>
+                <button onClick={()=>nav(`/blogid/${blogid}`)}>See more</button>
             </div>
         </div>
     )

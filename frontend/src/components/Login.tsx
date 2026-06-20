@@ -5,7 +5,8 @@ import './App.css'
 import Toast from './Toast'
 type responseData = {
     message:string,
-    ok:boolean
+    ok:boolean,
+    data?:any
 }
 export default function Login(){
     const nav = useNavigate()
@@ -15,17 +16,32 @@ export default function Login(){
     function validate(){
         if(email.trim().length === 0 || password.trim().length === 0){
             setToast({message:"Please fill in all fields",ok:false})
+            resetToasts('')
             return false
         }
         return true
+    }
+    function resetToasts(navi:string){
+        setTimeout(()=>{
+            setToast({message:"",ok:false})
+            if(nav.length > 0){
+                nav(navi)
+            }
+        },3000)
     }
     async function login(){
         if(!validate()) return
         try {
             const response = await axios.post<responseData>(`${import.meta.env.VITE_BACKEND_URL}/user/login`,{email:email,password:password})
             setToast({message:response.data.message,ok:response.data.ok})
+            if(response.data.ok){
+                resetToasts(`app/${response.data.data}`)
+            } else{
+                resetToasts("")
+            }
         } catch(err){
             setToast({message:'Error',ok:false})
+            resetToasts('')
         }
     }
     return (

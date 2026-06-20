@@ -11,8 +11,9 @@ create table blogdata(
     title text,
     data text,
     createddate timestamp,
-    comments jsonb,
+    comments text[],
     editeddate timestamp,
     username text,
+    batchnumber integer,
     likes int[]
 )

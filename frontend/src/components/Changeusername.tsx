@@ -10,7 +10,17 @@ export default function Changeusername(){
     const [userData,setUserData] = useState<{username:string,email:string}>({username:"",email:""})
     const par = useParams()
     const nav = useNavigate()
+    function validate(){
+        if(username.trim().length === 0 || currPassword.trim().length === 0){
+            setToast({message:"Empty fields",ok:false})
+            setTimeout(()=>{
+                setToast({message:"",ok:false})
+            },3000)
+            return false}
+        return true
+    }
     async function changeUsername(){
+        if(!validate()){return}
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/changeUsername`,{
             withCredentials:true,
             uuid:par.uuid,

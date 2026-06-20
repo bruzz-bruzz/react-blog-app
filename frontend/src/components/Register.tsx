@@ -15,9 +15,18 @@ export default function Register(){
     function validate(){
         if(email.trim().length === 0 || password.trim().length === 0){
             setToast({message:"Please fill in all fields",ok:false})
+            resetToasts('')
             return false
         }
         return true
+    }
+    function resetToasts(navi:string){
+        setTimeout(()=>{
+            setToast({message:"",ok:false})
+            if(nav.length > 0){
+                nav(navi)
+            }
+        },3000)
     }
     async function register(){
         if(!validate()) return
@@ -26,8 +35,10 @@ export default function Register(){
                 email:email,password:password
             })
             setToast({message:response.data.message,ok:response.data.ok})
+            resetToasts('')
         } catch(err){
             setToast({message:'Error',ok:false})
+            resetToasts('')
         }
     }
     return (

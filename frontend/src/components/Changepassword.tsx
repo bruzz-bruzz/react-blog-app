@@ -10,7 +10,17 @@ export default function Changepassword(){
     const [userData,setUserData] = useState<{username:string,email:string}>({username:"",email:""})
     const par = useParams()
     const nav = useNavigate()
+    function validate(){
+        if(currPassword.trim().length === 0 || newPassword.trim().length === 0){
+            setToast({message:"Empty fields",ok:false})
+            setTimeout(()=>{
+                setToast({message:"",ok:false})
+            },3000)
+            return false}
+        return true
+    }
     async function changePassword(){
+        if(!validate()){return}
         const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/changePassword`,{
             withCredentials:true,
             uuid:par.uuid,
